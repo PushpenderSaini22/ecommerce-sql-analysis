@@ -1,5 +1,6 @@
 # ecommerce-sql-analysis
 SQL analysis of a Brazilian e-commerce marketplace using Google BigQuery — covering order trends, customer geography, seasonality, and payment behavior via window functions, CTEs, and multi-table joins.
+
 ---
 
 ## 📌 Project Overview
@@ -8,14 +9,41 @@ SQL analysis of a Brazilian e-commerce marketplace using Google BigQuery — cov
 |---|---|
 | **Tool** | Google BigQuery (Standard SQL) |
 | **Domain** | E-commerce / Retail Analytics |
+| **Dataset** | Olist — Brazilian Marketplace (2016–2018) |
 | **Tables used** | `orders`, `customers`, `payments`, `order_items` |
 | **Techniques** | Window functions, CTEs, CASE-based bucketing, multi-table joins, UNION, date/time extraction |
 
-> Replace `PROJECT.DATASET` in every query below with your own BigQuery project and dataset name before running.
+> Replace `PROJECT.DATASET` in every query with your own BigQuery project and dataset name before running.
+
+### 📂 Repository Structure
+
+```
+ecommerce-sql-analysis/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── data/
+│   └── README.md        # dataset description + load instructions
+└── sql/
+    ├── 01_order_date_range.sql
+    ├── 02_customer_geo_count.sql
+    ├── 03_orders_growth_by_year.sql
+    ├── 04_monthly_seasonality.sql
+    ├── 05_orders_by_time_of_day.sql
+    ├── 06_monthly_orders_by_state.sql
+    ├── 07_cost_increase_2017_to_2018.sql
+    ├── 08_total_avg_order_price_by_state.sql
+    ├── 09_top_bottom_states_freight.sql
+    └── 10_monthly_orders_by_payment_type.sql
+```
+
+Each business question below maps 1:1 to a file in [`sql/`](./sql).
 
 ---
 
 ## 1. What is the time range between which the orders were placed?
+
+**→ [`sql/01_order_date_range.sql`](./sql/01_order_date_range.sql)**
 
 ```sql
 SELECT MIN(order_purchase_timestamp) as minimum_timestamp,
@@ -26,6 +54,8 @@ FROM `PROJECT.DATASET.orders`;
 ---
 
 ## 2. Count the cities and states of customers who ordered during the given period.
+
+**→ [`sql/02_customer_geo_count.sql`](./sql/02_customer_geo_count.sql)**
 
 ```sql
 SELECT COUNT(Distinct c.customer_city) as city_cnt,
@@ -39,6 +69,8 @@ ON c.customer_id = o.customer_id;
 
 ## 3. Is there a growing trend in the no. of orders placed over the past years?
 
+**→ [`sql/03_orders_growth_by_year.sql`](./sql/03_orders_growth_by_year.sql)**
+
 ```sql
 SELECT EXTRACT(Year from order_purchase_timestamp) as yr,
        count(*) as total_orders
@@ -51,6 +83,8 @@ ORDER BY yr;
 
 ## 4. Can we see some kind of monthly seasonality in terms of the no. of orders being placed?
 
+**→ [`sql/04_monthly_seasonality.sql`](./sql/04_monthly_seasonality.sql)**
+
 ```sql
 SELECT EXTRACT(Month from order_purchase_timestamp) as mnth,
        count(*) as total_orders
@@ -62,6 +96,8 @@ ORDER BY mnth;
 ---
 
 ## 5. During what time of day do the Brazilian customers mostly place their orders? (Dawn, Morning, Afternoon or Night)
+
+**→ [`sql/05_orders_by_time_of_day.sql`](./sql/05_orders_by_time_of_day.sql)**
 
 - 0-6 hrs : Dawn
 - 7-12 hrs : Morning
@@ -84,6 +120,8 @@ ORDER BY total_orders DESC;
 
 ## 6. Get the month-on-month no. of orders placed in each state.
 
+**→ [`sql/06_monthly_orders_by_state.sql`](./sql/06_monthly_orders_by_state.sql)**
+
 ```sql
 SELECT c.customer_state,
        EXTRACT(Month from o.order_purchase_timestamp) as month_dt,
@@ -98,6 +136,8 @@ ORDER BY c.customer_state, month_dt;
 ---
 
 ## 7. Get the % increase in the cost of orders from year 2017 to 2018 (include months between Jan to Aug only).
+
+**→ [`sql/07_cost_increase_2017_to_2018.sql`](./sql/07_cost_increase_2017_to_2018.sql)**
 
 ```sql
 WITH final as(
@@ -122,6 +162,8 @@ order by yr_dt;
 
 ## 8. Calculate the total & average value of order price for each state.
 
+**→ [`sql/08_total_avg_order_price_by_state.sql`](./sql/08_total_avg_order_price_by_state.sql)**
+
 ```sql
 SELECT c.customer_state,
        ROUND(SUM(price),2) as total_price,
@@ -137,6 +179,8 @@ GROUP BY c.customer_state;
 ---
 
 ## 9. Find the top 5 states with the highest and lowest average freight value.
+
+**→ [`sql/09_top_bottom_states_freight.sql`](./sql/09_top_bottom_states_freight.sql)**
 
 ```sql
 (SELECT c.customer_state,
@@ -168,6 +212,8 @@ limit 5);
 
 ## 10. Find the month-on-month no. of orders placed using different payment types.
 
+**→ [`sql/10_monthly_orders_by_payment_type.sql`](./sql/10_monthly_orders_by_payment_type.sql)**
+
 ```sql
 SELECT EXTRACT(YEAR from o.order_purchase_timestamp) as year,
        EXTRACT(MONTH from o.order_purchase_timestamp) as month,
@@ -196,15 +242,23 @@ ORDER BY year, month, p.payment_type;
 
 ## 🚀 How to Run
 
-1. Load the dataset (`orders`, `customers`, `payments`, `order_items`) into a BigQuery project.
+1. Load the dataset into a BigQuery project — see [`data/README.md`](./data/README.md)
+   for the table list and load instructions. (The raw CSVs are ~128 MB and are not
+   committed to this repo.)
 2. Replace `PROJECT.DATASET` in each query with your own BigQuery project and dataset name.
-3. Run each query independently in the BigQuery console.
+3. Run each file from [`sql/`](./sql) in the BigQuery console.
 
 ---
 
 ## 🧰 Tech Stack
 
 `Google BigQuery` · `Standard SQL` · `Window Functions` · `Data Analysis`
+
+---
+
+## 📄 License
+
+[MIT](./LICENSE)
 
 ---
 

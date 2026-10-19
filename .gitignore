@@ -1,0 +1,18 @@
+# Raw datasets are not committed to this repository.
+# The Olist e-commerce dataset is ~128 MB and is freely available publicly.
+# See data/README.md for download instructions.
+
+data/*.csv
+data/*.zip
+*.csv
+
+# SQL / BigQuery
+*.sql.gz
+*.tmp
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
