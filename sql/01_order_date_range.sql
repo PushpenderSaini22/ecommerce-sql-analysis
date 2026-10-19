@@ -2,4 +2,4 @@
 
 SELECT MIN(order_purchase_timestamp) AS minimum_timestamp,
        MAX(order_purchase_timestamp) AS maximum_timestamp
-FROM `PROJECT.DATASET.orders`;
+FROM orders;

@@ -2,6 +2,6 @@
 
 SELECT COUNT(DISTINCT c.customer_city)  AS city_cnt,
        COUNT(DISTINCT c.customer_state) AS state_cnt
-FROM `PROJECT.DATASET.orders`   AS o
-JOIN `PROJECT.DATASET.customers` AS c
-  ON c.customer_id = o.customer_id;
+FROM orders    AS o
+JOIN customers AS c
+  ON o.customer_id = c.customer_id;

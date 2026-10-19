@@ -1,15 +1,26 @@
-# Raw datasets are not committed to this repository.
-# The Olist e-commerce dataset is ~128 MB and is freely available publicly.
-# See data/README.md for download instructions.
+# Raw dataset CSVs are NOT committed - the full Olist dataset is ~128 MB.
+# Only the small curated sample in data/sample/ is tracked.
+# See data/README.md for how to rebuild the sample.
 
-data/*.csv
-data/*.zip
-*.csv
+/data/*.csv
+/data/*.zip
+/data/*.xlsx
+*.xlsx
 
-# SQL / BigQuery
-*.sql.gz
-*.tmp
-*.log
+# But always keep the sample
+!data/sample/*.csv
+
+# DuckDB
+*.db
+*.duckdb
+*.db.wal
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
 
 # OS / editor
 .DS_Store
